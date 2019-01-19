@@ -4,7 +4,8 @@ import sys
 
 def convert_color_space_BGR_to_RGB(img_BGR):
     img_RGB = np.zeros_like(img_BGR,dtype=np.float32)
-    # to be completed ...
+    # converting BGR to RGB
+    img_RGB = img_BGR[:,:,::-1]
     return img_RGB
 
 def convert_color_space_RGB_to_BGR(img_RGB):
@@ -55,6 +56,10 @@ def convert_color_space_CIECAM97s_to_RGB(img_CIECAM97s):
 
 def color_transfer_in_Lab(img_RGB_source, img_RGB_target):
     print('===== color_transfer_in_Lab =====')
+
+    rgb = convert_color_space_BGR_to_RGB(img_RGB_source)
+    lab = convert_color_space_RGB_to_Lab(rgb)
+    
     # to be completed ...
 
 def color_transfer_in_RGB(img_RGB_source, img_RGB_target):
@@ -81,13 +86,18 @@ if __name__ == "__main__":
 
     path_file_image_source = sys.argv[1]
     path_file_image_target = sys.argv[2]
-    path_file_image_result_in_Lab = sys.argv[3]
-    path_file_image_result_in_RGB = sys.argv[4]
-    path_file_image_result_in_CIECAM97s = sys.argv[5]
+    # path_file_image_result_in_Lab = sys.argv[3]
+    # path_file_image_result_in_RGB = sys.argv[4]
+    # path_file_image_result_in_CIECAM97s = sys.argv[5]
 
     # ===== read input images
     # img_RGB_source: is the image you want to change the its color
     # img_RGB_target: is the image containing the color distribution that you want to change the img_RGB_source to (transfer color of the img_RGB_target to the img_RGB_source)
+
+    img_RGB_source = cv2.imread(filename = path_file_image_source).astype(np.float32) / 255.0
+    img_RGB_target = cv2.imread(filename = path_file_image_target).astype(np.float32) / 255.0
+
+
 
     img_RGB_new_Lab       = color_transfer(img_RGB_source, img_RGB_target, option='in_Lab')
     # todo: save image to path_file_image_result_in_Lab
@@ -96,4 +106,4 @@ if __name__ == "__main__":
     # todo: save image to path_file_image_result_in_RGB
 
     img_RGB_new_CIECAM97s = color_transfer(img_RGB_source, img_RGB_target, option='in_CIECAM97s')
-    # todo: save image to path_file_image_result_in_CIECAM97s
+    todo: save image to path_file_image_result_in_CIECAM97s
