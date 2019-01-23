@@ -26,28 +26,35 @@ def convert_color_space_RGB_to_Lab(img_RGB):
 			     [0.1967, 0.7244, 0.0782],
 			     [0.0241, 0.1288, 0.8444]])
 
-	img_LMS = np.dot(img_RGB, img_temp)
-	#print(img_LMS)	
-	#print(img_LMS.shape)
-	#print("Something before taking log")
+	R = img_RGB[:,:,2]
+	G = img_RGB[:,:,1]
+	B = img_RGB[:,:,0]
 	
-	img_LMS = np.log(img_LMS)
+	print(R)
+
+	#img_LMS = np.matmul(, img_temp)
+	
+	
+	L = img_LMS[:,:,2]
+	M = img_LMS[:,:,1]
+	S = img_LMS[:,:,0]
+	
 	#print(img_LMS)	
 	
 	img_Lab = np.zeros_like(img_RGB,dtype=np.float32)
 
-	img_temp1 = np.array([[(1/math.sqrt(3)), 0, 0],
-			     [0, (1/math.sqrt(6)), 0],
-			     [0, 0, (1/math.sqrt(2))]])
+	img_temp1 = np.array([[(1/np.sqrt(3)), 0, 0],
+			     [0, (1/np.sqrt(6)), 0],
+			     [0, 0, (1/np.sqrt(2))]])
 
 	img_temp2 = np.array([[1, 1, 1],
 			     [1, 1, -2],
 			     [1, -1, 0]])
 
-	img_temp3 = np.dot(img_temp1, img_temp2)
+	img_temp3 = np.matmul(img_temp1, img_temp2)
 	#print(img_temp3)
 
-	img_Lab = np.dot(img_LMS, img_temp3)
+	img_Lab = np.matmul(img_LMS, img_temp3)
 	
 	return img_Lab
 
@@ -85,16 +92,13 @@ def color_transfer_in_Lab(img_RGB_source, img_RGB_target):
 
 	print('===== color_transfer_in_Lab =====')
 	
-	rgb = convert_color_space_BGR_to_RGB(img_RGB_source)
+	rgb_source = convert_color_space_BGR_to_RGB(img_RGB_source)
+	rgb_target = convert_color_space_BGR_to_RGB(img_RGB_target)
 
-	lab = convert_color_space_RGB_to_Lab(rgb)
+	lab_source = convert_color_space_RGB_to_Lab(rgb_source)
+	lab_target = convert_color_space_RGB_to_Lab(rgb_target)
 
-	labcvt = cv2.cvtColor(img_RGB_source, code=cv2.COLOR_BGR2Lab)
-	
-	cv2.imwrite("lab.png", lab)
-	cv2.imwrite("labcvt.png", labcvt)
 
-	#print(lab)
 
 	
     
