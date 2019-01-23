@@ -1,28 +1,55 @@
 import cv2
 import numpy as np
 import sys
+import math
 
 def convert_color_space_BGR_to_RGB(img_BGR):
-    img_RGB = np.zeros_like(img_BGR,dtype=np.float32)
-    # converting BGR to RGB
-    img_RGB = img_BGR[:,:,::-1]
-    return img_RGB
+	img_RGB = np.zeros_like(img_BGR,dtype=np.float32)
+	# converting BGR to RGB
+	img_RGB = img_BGR[:,:,::-1]
+	return img_RGB
 
 def convert_color_space_RGB_to_BGR(img_RGB):
-    img_BGR = np.zeros_like(img_RGB,dtype=np.float32)
-    # to be completed ...
-    return img_BGR
+	img_BGR = np.zeros_like(img_RGB,dtype=np.float32)
+	# to be completed ...
+	return img_BGR
 
 def convert_color_space_RGB_to_Lab(img_RGB):
-    '''
-    convert image color space RGB to Lab
-    '''
-    img_LMS = np.zeros_like(img_RGB,dtype=np.float32)
-    # to be completed ...
+	'''
+	convert image color space RGB to Lab
+	'''
+	img_LMS = np.zeros_like(img_RGB,dtype=np.float32)
+	
 
-    img_Lab = np.zeros_like(img_RGB,dtype=np.float32)
-    # to be completed ...
-    return img_Lab
+
+	img_temp = np.array([[0.3811, 0.5783, 0.0402],
+			     [0.1967, 0.7244, 0.0782],
+			     [0.0241, 0.1288, 0.8444]])
+
+	img_LMS = np.dot(img_RGB, img_temp)
+	#print(img_LMS)	
+	#print(img_LMS.shape)
+	#print("Something before taking log")
+	
+	img_LMS = np.log(img_LMS)
+	#print(img_LMS)	
+	
+	img_Lab = np.zeros_like(img_RGB,dtype=np.float32)
+
+	img_temp1 = np.array([[(1/math.sqrt(3)), 0, 0],
+			     [0, (1/math.sqrt(6)), 0],
+			     [0, 0, (1/math.sqrt(2))]])
+
+	img_temp2 = np.array([[1, 1, 1],
+			     [1, 1, -2],
+			     [1, -1, 0]])
+
+	img_temp3 = np.dot(img_temp1, img_temp2)
+	#print(img_temp3)
+
+	img_Lab = np.dot(img_LMS, img_temp3)
+	
+	return img_Lab
 
 def convert_color_space_Lab_to_RGB(img_Lab):
     '''
@@ -55,10 +82,21 @@ def convert_color_space_CIECAM97s_to_RGB(img_CIECAM97s):
 
 
 def color_transfer_in_Lab(img_RGB_source, img_RGB_target):
-    print('===== color_transfer_in_Lab =====')
 
-    rgb = convert_color_space_BGR_to_RGB(img_RGB_source)
-    lab = convert_color_space_RGB_to_Lab(rgb)
+	print('===== color_transfer_in_Lab =====')
+	
+	rgb = convert_color_space_BGR_to_RGB(img_RGB_source)
+
+	lab = convert_color_space_RGB_to_Lab(rgb)
+
+	labcvt = cv2.cvtColor(img_RGB_source, code=cv2.COLOR_BGR2Lab)
+	
+	cv2.imwrite("lab.png", lab)
+	cv2.imwrite("labcvt.png", labcvt)
+
+	#print(lab)
+
+	
     
     # to be completed ...
 
@@ -106,4 +144,4 @@ if __name__ == "__main__":
     # todo: save image to path_file_image_result_in_RGB
 
     img_RGB_new_CIECAM97s = color_transfer(img_RGB_source, img_RGB_target, option='in_CIECAM97s')
-    todo: save image to path_file_image_result_in_CIECAM97s
+    # todo: save image to path_file_image_result_in_CIECAM97s
